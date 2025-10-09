@@ -11,7 +11,7 @@ from pulumi_pequod_stackmgmt import StackSettings, StackSettingsArgs
 
 # Get GCP project and region from config or environment
 gcp_config = Config("gcp")
-gcp_project = gcp_config.get("project") or os.getenv("GOOGLE_PROJECT")
+gcp_project_name = gcp_config.get("projectName") or os.getenv("GOOGLE_PROJECT")
 gcp_region = gcp_config.get("region") or "us-central1"
 gcp_zone = gcp_config.get("zone") or "us-central1-a"
 
