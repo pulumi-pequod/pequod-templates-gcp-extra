@@ -19,7 +19,7 @@ template:
       description: Desired memory for the LLM model
       default: 16Gi 
     stackTtl:
-      description: How long before shutting down the stack in hours. (Default: 8 hours)
+      description: How long before shutting down the stack in hours. (Default is 8 hours)
       default: 8
     driftManagement:
       description: Set to "Correct" (default) for drift detection and remediateion, or "DetectOnly" for detection only.
