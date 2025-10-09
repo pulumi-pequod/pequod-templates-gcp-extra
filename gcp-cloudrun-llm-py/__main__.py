@@ -4,14 +4,13 @@ from pulumi_command import local
 import pulumi_docker_build as docker_build
 import pulumi_gcp as gcp
 from pulumi_gcp import cloudrunv2 as cloudrun
-import os
 
 # Pequod Components
 from pulumi_pequod_stackmgmt import StackSettings, StackSettingsArgs
 
 # Get GCP project and region from config or environment
 gcp_config = Config("gcp")
-gcp_project_name = gcp_config.get("projectName") or os.getenv("GOOGLE_PROJECT_NAME")
+gcp_project = gcp_config.get("project") 
 gcp_region = gcp_config.get("region") or "us-central1"
 gcp_zone = gcp_config.get("zone") or "us-central1-a"
 
