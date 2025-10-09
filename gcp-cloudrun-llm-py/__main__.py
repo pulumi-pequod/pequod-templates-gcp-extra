@@ -105,9 +105,9 @@ install_model = local.Command(f"install_model_{llm_model.replace(':', '_')}",
 
 ### Open WebUI Deployment ###
 # Artifact Registry Repo for Docker Images
-llm_repo = gcp.artifactregistry.Repository("llm-repo",
+openwebui_repo = gcp.artifactregistry.Repository("llm-repo",
     location=gcp_region,
-    repository_id="openwebui",
+    repository_id="openwebui-"+str(base_name),
     description="Repo for Open WebUI usage",
     format="DOCKER",
     docker_config={
@@ -116,7 +116,7 @@ llm_repo = gcp.artifactregistry.Repository("llm-repo",
 )
 
 # Docker image URL
-openwebui_image = str(gcp_region)+"-docker.pkg.dev/"+str(gcp_project)+"/openwebui/openwebui"
+openwebui_image = openwebui_repo.name.apply(lambda repo_name: f"{gcp_region}-docker.pkg.dev/{gcp_project}/{repo_name}/openwebui")
 
 # Build and Deploy Open WebUI Docker
 openwebui_docker_image = docker_build.Image('openwebui',
@@ -132,6 +132,7 @@ openwebui_docker_image = docker_build.Image('openwebui',
         docker_build.Platform.LINUX_ARM64,
     ],
     push=True,
+    opts=pulumi.ResourceOptions(depends_on=[openwebui_repo])
 )
 
 # Open WebUI Cloud Run instance
@@ -193,7 +194,7 @@ openwebui_binding = cloudrun.ServiceIamBinding("openwebui-binding",
 
 stackmgmt = StackSettings("stacksettings", 
                           drift_management=drift_management if drift_management else None,
-                          stack_ttl=(stack_ttl * 60) if stack_ttl else None,
+                          ttl_minutes=(stack_ttl * 60) if stack_ttl else None,
 )
 
 pulumi.export("LLM model deployed", llm_model)
