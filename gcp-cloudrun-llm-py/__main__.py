@@ -4,6 +4,7 @@ from pulumi_command import local
 import pulumi_docker_build as docker_build
 import pulumi_gcp as gcp
 from pulumi_gcp import cloudrunv2 as cloudrun
+import time
 
 # Pequod Components
 from pulumi_pequod_stackmgmt import StackSettings, StackSettingsArgs
@@ -121,6 +122,7 @@ openwebui_image = openwebui_repo.name.apply(lambda repo_name: f"{gcp_region}-doc
 # Configure Docker to use gcloud credential helper
 configure_docker = local.Command("configure-docker-gcp",
     create=f"gcloud auth configure-docker {gcp_region}-docker.pkg.dev --quiet",
+    triggers=[time.time()], # Ensure this runs every time
     opts=pulumi.ResourceOptions(depends_on=[openwebui_repo])
 )
 
