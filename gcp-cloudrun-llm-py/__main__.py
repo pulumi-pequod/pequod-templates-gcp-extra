@@ -30,6 +30,7 @@ base_name = config.get("baseName") or f"{pulumi.get_project()}-{pulumi.get_stack
 # LLM Bucket
 llm_bucket = gcp.storage.Bucket("llm-bucket",
     name=str(base_name)+"-llm-bucket",
+    location=gcp_region,
     force_destroy=True,
     uniform_bucket_level_access=True,
 )
@@ -37,6 +38,7 @@ llm_bucket = gcp.storage.Bucket("llm-bucket",
 # Deploy Ollama Cloud Run service using base image 
 ollama_cr_service = cloudrun.Service("ollama_cr_service",
     name=str(base_name)+"-ollama-cr",
+    location=gcp_region,
     deletion_protection= False,
     ingress="INGRESS_TRAFFIC_ALL",
     launch_stage="BETA",
@@ -89,6 +91,7 @@ ollama_cr_service = cloudrun.Service("ollama_cr_service",
 
 ollama_binding = cloudrun.ServiceIamBinding("ollama-binding",
     name=ollama_cr_service,
+    location=gcp_region,
     role="roles/run.invoker",
     members=["allUsers"],
     opts=pulumi.ResourceOptions(depends_on=[ollama_cr_service]),
@@ -104,6 +107,7 @@ install_model = local.Command(f"install_model_{llm_model.replace(':', '_')}",
 ### Open WebUI Deployment ###
 # Artifact Registry Repo for Docker Images
 llm_repo = gcp.artifactregistry.Repository("llm-repo",
+    location=gcp_region,
     repository_id="openwebui",
     description="Repo for Open WebUI usage",
     format="DOCKER",
