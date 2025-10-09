@@ -118,6 +118,12 @@ openwebui_repo = gcp.artifactregistry.Repository("llm-repo",
 # Docker image URL
 openwebui_image = openwebui_repo.name.apply(lambda repo_name: f"{gcp_region}-docker.pkg.dev/{gcp_project}/{repo_name}/openwebui")
 
+# Configure Docker to use gcloud credential helper
+configure_docker = local.Command("configure-docker-gcp",
+    create=f"gcloud auth configure-docker {gcp_region}-docker.pkg.dev --quiet",
+    opts=pulumi.ResourceOptions(depends_on=[openwebui_repo])
+)
+
 # Build and Deploy Open WebUI Docker
 openwebui_docker_image = docker_build.Image('openwebui',
     tags=[openwebui_image],                                  
@@ -132,7 +138,7 @@ openwebui_docker_image = docker_build.Image('openwebui',
         docker_build.Platform.LINUX_ARM64,
     ],
     push=True,
-    opts=pulumi.ResourceOptions(depends_on=[openwebui_repo])
+    opts=pulumi.ResourceOptions(depends_on=[openwebui_repo, configure_docker])
 )
 
 # Open WebUI Cloud Run instance
