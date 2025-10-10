@@ -153,7 +153,7 @@ openwebui_cr_service = cloudrun.Service("openwebui-service",
         "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST",
         "percent": 100,
     }],
-    opts=pulumi.ResourceOptions(depends_on=[ollama_binding, openwebui_docker_image]),
+    opts=pulumi.ResourceOptions(depends_on=[ollama_binding]),
 )
 
 openwebui_binding = cloudrun.ServiceIamBinding("openwebui-binding",
