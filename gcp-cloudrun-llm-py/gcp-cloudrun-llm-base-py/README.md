@@ -6,10 +6,11 @@ Deploys:
 - GCP Artifact Registry
 - OpenWebUI Image
 - Ollama Image with Gemma model installed
+- ESC environment
 
 ## Demonstrated Capabilities
 - GCP Artifact Registry
 - Docker-Build
-- ESC Environment with the Stacks provider
+- Pulumi Service provider managing ESC environment
 - Remote Pulumi component (`StackSettings`)
 
