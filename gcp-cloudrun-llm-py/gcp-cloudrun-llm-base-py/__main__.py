@@ -1,6 +1,7 @@
 import pulumi
 from pulumi import Config
 from pulumi_command import local
+import pulumi_pulumiservice as pulumiservice
 import pulumi_docker_build as docker_build
 import pulumi_gcp as gcp
 import time
@@ -88,6 +89,18 @@ ollama_docker_image = docker_build.Image('ollama',
     ],
     push=True,
     opts=pulumi.ResourceOptions(depends_on=[ollama_repo, configure_docker])
+)
+
+esc_yaml=pulumi.Output.all(ollama_image, openwebui_image).apply(lambda ollamaImage, openwebuiImage: pulumi.FileAsset(f"""values:
+  pulumiConfig:
+    ollamaImage: {ollamaImage}
+    openwebuiImage: {openwebuiImage}""")),
+
+esc_baseimages = pulumiservice.Environment("esc_baseimages",
+    name="base-images",
+    organization="pequod",
+    project="gcp-cloudrun-llm",
+    yaml=esc_yaml,
 )
 
 pulumi.export("openwebuiImage", openwebui_image)
