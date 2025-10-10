@@ -101,7 +101,7 @@ ollama_binding = cloudrun.ServiceIamBinding("ollama-binding",
 
 # Use Command provider to install an model if specified via Ollama API
 # The base image already has gemma3, so this is optional for other models
-install_model_command = ollama_cr_service.uri.apply(lambda ollama_service_uri, model=llm_model:  f"sleep 5;curl {ollama_service_uri}/api/pull -d '{{\"model\":\"{model}\"}}'")
+install_model_command = ollama_cr_service.uri.apply(lambda ollama_service_uri, model=llm_model:  f"sleep 5;curl -s -o /dev/null {ollama_service_uri}/api/pull -d '{{\"model\":\"{model}\"}}'")
 install_model = local.Command(f"install_model_{llm_model.replace(':', '_')}",
     create=install_model_command,
     opts=pulumi.ResourceOptions(depends_on=[ollama_binding]),
