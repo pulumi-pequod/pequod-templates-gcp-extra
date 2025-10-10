@@ -91,10 +91,14 @@ ollama_docker_image = docker_build.Image('ollama',
     opts=pulumi.ResourceOptions(depends_on=[ollama_repo, configure_docker])
 )
 
-esc_yaml=pulumi.Output.all(ollama_image, openwebui_image).apply(lambda ollamaImage, openwebuiImage: pulumi.FileAsset(f"""values:
-  pulumiConfig:
-    ollamaImage: {ollamaImage}
-    openwebuiImage: {openwebuiImage}""")),
+esc_yaml = pulumi.Output.all(ollama_image, openwebui_image).apply(
+        lambda ollamaImage, openwebuiImage: [
+                pulumi.FileAsset(f"""values:
+    pulumiConfig:
+        ollamaImage: {ollamaImage}
+        openwebuiImage: {openwebuiImage}""")
+        ]
+)
 
 esc_baseimages = pulumiservice.Environment("esc_baseimages",
     name="base-images",
