@@ -15,7 +15,7 @@ gcp_zone = gcp_config.get("zone") or "us-central1-a"
 
 # Get some provider-namespaced configuration values 
 config = pulumi.Config()
-llm_model = config.get("llmModel") 
+llm_model = config.get("llmModel") or "gemma3:latest"
 llm_cpu = config.get_int("llmCpu") or 8
 llm_memory = config.get("llmMemory") or "16Gi"
 llm_num_gpus = config.get_int("llmNumGpus") or 1
