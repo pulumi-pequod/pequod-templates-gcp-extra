@@ -1,0 +1,18 @@
+name: ${PROJECT}
+runtime:
+  name: python
+  options:
+    virtualenv: venv
+description: ${DESCRIPTION}
+packages:
+  stackmgmt: https://github.com/pulumi-pequod/component-stackmgmt
+template:
+  description: Pulumi program that deploys LLM infra on GCP CloudRun.
+  config:
+    stackTtl:
+      description: How long before shutting down the stack in hours. (Default is 8 hours)
+      default: 8
+    driftManagement:
+      description: Set to "Correct" (default) for drift detection and remediateion, or "DetectOnly" for detection only.
+      default: Correct
+

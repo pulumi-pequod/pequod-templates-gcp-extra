@@ -1,10 +1,8 @@
 import pulumi
 from pulumi import Config
 from pulumi_command import local
-import pulumi_docker_build as docker_build
 import pulumi_gcp as gcp
 from pulumi_gcp import cloudrunv2 as cloudrun
-import time
 
 # Pequod Components
 from pulumi_pequod_stackmgmt import StackSettings, StackSettingsArgs
@@ -17,7 +15,7 @@ gcp_zone = gcp_config.get("zone") or "us-central1-a"
 
 # Get some provider-namespaced configuration values 
 config = pulumi.Config()
-llm_model = config.get("llmModel") or ["gemma3:latest"]
+llm_model = config.get("llmModel") 
 llm_cpu = config.get_int("llmCpu") or 8
 llm_memory = config.get("llmMemory") or "16Gi"
 llm_num_gpus = config.get_int("llmNumGpus") or 1
@@ -25,6 +23,10 @@ stack_ttl = config.get_int("stackTtl")
 drift_management = config.get("driftManagement") 
 
 base_name = config.get("baseName") or f"{pulumi.get_project()}-{pulumi.get_stack()}"
+
+# Get outputs from base infra stack
+ollama_image = config.get("ollamaImage")
+openwebui_image = config.get("openwebuiImage")
 
 ### LLM Deployment ###
 # LLM Bucket
@@ -44,7 +46,7 @@ ollama_cr_service = cloudrun.Service("ollama_cr_service",
     launch_stage="BETA",
     template={
         "containers":[{
-            "image": "ollama/ollama:latest",
+            "image": ollama_image,
             "resources": {
                 "cpuIdle": False,
                 "limits":{
@@ -97,7 +99,8 @@ ollama_binding = cloudrun.ServiceIamBinding("ollama-binding",
     opts=pulumi.ResourceOptions(depends_on=[ollama_cr_service]),
 )
 
-# Use Command provider to install models via Ollama API
+# Use Command provider to install an model if specified via Ollama API
+# The base image already has gemma3, so this is optional for other models
 install_model_command = ollama_cr_service.uri.apply(lambda ollama_service_uri, model=llm_model:  f"sleep 5;curl {ollama_service_uri}/api/pull -d '{{\"model\":\"{model}\"}}'")
 install_model = local.Command(f"install_model_{llm_model.replace(':', '_')}",
     create=install_model_command,
@@ -105,44 +108,6 @@ install_model = local.Command(f"install_model_{llm_model.replace(':', '_')}",
 )
 
 ### Open WebUI Deployment ###
-# Artifact Registry Repo for Docker Images
-openwebui_repo = gcp.artifactregistry.Repository("llm-repo",
-    location=gcp_region,
-    repository_id="openwebui-"+str(base_name),
-    description="Repo for Open WebUI usage",
-    format="DOCKER",
-    docker_config={
-        "immutable_tags": True,
-    }
-)
-
-# Docker image URL
-openwebui_image = openwebui_repo.name.apply(lambda repo_name: f"{gcp_region}-docker.pkg.dev/{gcp_project}/{repo_name}/openwebui")
-
-# Configure Docker to use gcloud credential helper
-configure_docker = local.Command("configure-docker-gcp",
-    create=f"gcloud auth configure-docker {gcp_region}-docker.pkg.dev --quiet",
-    triggers=[time.time()], # Ensure this runs every time
-    opts=pulumi.ResourceOptions(depends_on=[openwebui_repo])
-)
-
-# Build and Deploy Open WebUI Docker
-openwebui_docker_image = docker_build.Image('openwebui',
-    tags=[openwebui_image],                                  
-    context=docker_build.BuildContextArgs(
-        location="./",
-    ),
-    dockerfile=docker_build.DockerfileArgs(
-        location="./Dockerfile.openwebui",
-    ),
-    platforms=[
-        docker_build.Platform.LINUX_AMD64,
-        docker_build.Platform.LINUX_ARM64,
-    ],
-    push=True,
-    opts=pulumi.ResourceOptions(depends_on=[openwebui_repo, configure_docker])
-)
-
 # Open WebUI Cloud Run instance
 openwebui_cr_service = cloudrun.Service("openwebui-service",
     name="openwebui-service",
