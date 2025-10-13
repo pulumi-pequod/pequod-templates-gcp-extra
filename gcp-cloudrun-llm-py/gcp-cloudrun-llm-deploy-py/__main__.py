@@ -110,7 +110,7 @@ install_model = local.Command(f"install_model_{llm_model.replace(':', '_')}",
 ### Open WebUI Deployment ###
 # Open WebUI Cloud Run instance
 openwebui_cr_service = cloudrun.Service("openwebui-service",
-    name="openwebui-service",
+    name=str(base_name)+"-openwebui-cr",
     location=gcp_region,
     deletion_protection= False,
     ingress="INGRESS_TRAFFIC_ALL",
