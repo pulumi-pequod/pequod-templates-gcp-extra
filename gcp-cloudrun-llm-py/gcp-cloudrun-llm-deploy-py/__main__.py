@@ -39,7 +39,7 @@ llm_bucket = gcp.storage.Bucket("llm-bucket",
 
 # Deploy Ollama Cloud Run service using base image 
 ollama_cr_service = cloudrun.Service("ollama_cr_service",
-    name=str(base_name)+"-ollama-cr",
+    name=f"{base_name}-ollama-cr"[:50], # Cloud Run service name max length is 50 chars
     location=gcp_region,
     deletion_protection= False,
     ingress="INGRESS_TRAFFIC_ALL",
@@ -110,7 +110,7 @@ install_model = local.Command(f"install_model_{llm_model.replace(':', '_')}",
 ### Open WebUI Deployment ###
 # Open WebUI Cloud Run instance
 openwebui_cr_service = cloudrun.Service("openwebui-service",
-    name=str(base_name)+"-openwebui-cr",
+    name=f"{base_name}-openwebui-cr"[:50], # Cloud Run service name max length is 50 chars
     location=gcp_region,
     deletion_protection= False,
     ingress="INGRESS_TRAFFIC_ALL",
