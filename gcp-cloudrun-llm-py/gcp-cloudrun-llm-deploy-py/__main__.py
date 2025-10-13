@@ -24,7 +24,8 @@ drift_management = config.get("driftManagement")
 
 base_name = config.get("baseName") or f"{pulumi.get_project()}-{pulumi.get_stack()}"
 
-def service_name_shortener(name, max_length):
+def service_name_shortener(name):
+    max_length = 50  # Cloud Run service name max length is 50 chars
     if len(name) <= max_length:
         return name
     truncated_name = name[:max_length]
