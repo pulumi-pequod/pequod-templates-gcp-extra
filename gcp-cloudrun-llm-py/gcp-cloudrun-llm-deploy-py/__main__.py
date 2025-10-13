@@ -24,6 +24,15 @@ drift_management = config.get("driftManagement")
 
 base_name = config.get("baseName") or f"{pulumi.get_project()}-{pulumi.get_stack()}"
 
+def service_name_shortener(name, max_length):
+    if len(name) <= max_length:
+        return name
+    truncated_name = name[:max_length]
+    # Check if the last character is undesirable and adjust if needed
+    while truncated_name and not truncated_name[-1].isalnum():
+        truncated_name = truncated_name[:-1]
+    return truncated_name
+
 # Get outputs from base infra stack
 ollama_image = config.get("ollamaImage")
 openwebui_image = config.get("openwebuiImage")
@@ -39,7 +48,7 @@ llm_bucket = gcp.storage.Bucket("llm-bucket",
 
 # Deploy Ollama Cloud Run service using base image 
 ollama_cr_service = cloudrun.Service("ollama_cr_service",
-    name=f"{base_name}-ollama-cr"[:50], # Cloud Run service name max length is 50 chars
+    name=service_name_shortener(f"{base_name}-ollama-cr"),
     location=gcp_region,
     deletion_protection= False,
     ingress="INGRESS_TRAFFIC_ALL",
@@ -110,7 +119,7 @@ install_model = local.Command(f"install_model_{llm_model.replace(':', '_')}",
 ### Open WebUI Deployment ###
 # Open WebUI Cloud Run instance
 openwebui_cr_service = cloudrun.Service("openwebui-service",
-    name=f"{base_name}-openwebui-cr"[:50], # Cloud Run service name max length is 50 chars
+    name=service_name_shortener(f"{base_name}-openwebui-cr"),
     location=gcp_region,
     deletion_protection= False,
     ingress="INGRESS_TRAFFIC_ALL",
@@ -173,3 +182,6 @@ stackmgmt = StackSettings("stacksettings",
 pulumi.export("LLM model deployed", llm_model)
 pulumi.export("ollama_url", ollama_cr_service.uri)
 pulumi.export("open_webui_url", openwebui_cr_service.uri)
+
+
+
