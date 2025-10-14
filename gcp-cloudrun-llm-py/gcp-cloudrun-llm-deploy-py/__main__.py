@@ -53,7 +53,6 @@ ollama_cr_service = cloudrun.Service("ollama_cr_service",
     location=gcp_region,
     deletion_protection= False,
     ingress="INGRESS_TRAFFIC_ALL",
-    # launch_stage="BETA",
     template={
         "containers":[{
             "image": ollama_image,
@@ -124,7 +123,6 @@ openwebui_cr_service = cloudrun.Service("openwebui-service",
     location=gcp_region,
     deletion_protection= False,
     ingress="INGRESS_TRAFFIC_ALL",
-    # launch_stage="BETA",
     template={
         "containers":[{
             "image": openwebui_image,
