@@ -7,7 +7,7 @@ description: ${DESCRIPTION}
 packages:
   stackmgmt: https://github.com/pulumi-pequod/component-stackmgmt
 template:
-  description: Pulumi program that deploys LLM infra on GCP CloudRun.
+  description: Builds LLM and OpenWebUI images pushed to GCP Artifact Registry.
   config:
     stackTtl:
       description: How long before shutting down the stack in hours. (Default is 12 hours)
