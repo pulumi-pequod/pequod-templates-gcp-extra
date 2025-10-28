@@ -1,0 +1,24 @@
+[project]
+name = "adk-agent"
+version = "0.1.0"
+description = "Production ADK agent service"
+requires-python = ">=3.10"
+
+# Core runtime deps for the agent server
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.30",
+  "python-dotenv>=1.0",
+  "google-auth>=2.0",
+  "litellm>=1.0",
+  # Google ADK (Agent Development Kit). If this fails to resolve, adjust the
+  # package name/version to match your environment.
+  "google-adk>=0.1.0",
+]
+
+[tool.uv]
+# Ensure uv creates a local .venv during `uv sync`
+index-url = "https://pypi.org/simple"
+
+[tool.uv.workspace]
+members = []

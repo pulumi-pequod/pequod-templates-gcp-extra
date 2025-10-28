@@ -28,20 +28,19 @@ configure_docker = local.Command("configure-docker-gcp",
 )
 
 ## Artifact Registry Repo for Docker Images
-
-# OpenWebUI Repo
-openwebui_repo = gcp.artifactregistry.Repository("openwebui-repo",
+repository_id = "llm-base-images-"+str(base_name)
+image_repo = gcp.artifactregistry.Repository("llm-base-images-repo",
     location=gcp_region,
-    repository_id="openwebui-"+str(base_name),
-    description="Repo for Open WebUI usage",
+    repository_id=repository_id,
+    description="Repo for LLM Base Images",
     format="DOCKER",
-    docker_config={
-        "immutable_tags": True,
-    }
+    # docker_config={
+    #     "immutable_tags": True,
+    # }
 )
 
 # OpenWebUI Docker image URL
-openwebui_image = openwebui_repo.name.apply(lambda repo_name: f"{gcp_region}-docker.pkg.dev/{gcp_project}/{repo_name}/openwebui")
+openwebui_image = image_repo.name.apply(lambda repo_name: f"{gcp_region}-docker.pkg.dev/{gcp_project}/{repo_name}/openwebui")
 
 # Build and Deploy Open WebUI Docker
 openwebui_docker_image = docker_build.Image('openwebui',
@@ -57,22 +56,31 @@ openwebui_docker_image = docker_build.Image('openwebui',
         docker_build.Platform.LINUX_ARM64,
     ],
     push=True,
-    opts=pulumi.ResourceOptions(depends_on=[openwebui_repo, configure_docker])
+    opts=pulumi.ResourceOptions(depends_on=[image_repo, configure_docker])
 )
 
-# Ollama Repo
-ollama_repo = gcp.artifactregistry.Repository("ollama-repo",
-    location=gcp_region,
-    repository_id="ollama-"+str(base_name),
-    description="Repo for Ollama usage",
-    format="DOCKER",
-    docker_config={
-        "immutable_tags": True,
-    }
+# Agent Docker image URL
+agent_image = image_repo.name.apply(lambda repo_name: f"{gcp_region}-docker.pkg.dev/{gcp_project}/{repo_name}/adk-agent")
+
+# Build and Deploy Agent Docker
+agent_docker_image = docker_build.Image('adk-agent',
+    tags=[agent_image],
+    context=docker_build.BuildContextArgs(
+        location="./adk-agent/",
+    ),
+    dockerfile=docker_build.DockerfileArgs(
+        location="./adk-agent/Dockerfile",
+    ),
+    platforms=[
+        docker_build.Platform.LINUX_AMD64,
+        docker_build.Platform.LINUX_ARM64,
+    ],
+    push=True,
+    opts=pulumi.ResourceOptions(depends_on=[image_repo, configure_docker])
 )
 
 # Ollama Docker image URL
-ollama_image = ollama_repo.name.apply(lambda repo_name: f"{gcp_region}-docker.pkg.dev/{gcp_project}/{repo_name}/ollama")
+ollama_image = image_repo.name.apply(lambda repo_name: f"{gcp_region}-docker.pkg.dev/{gcp_project}/{repo_name}/ollama")
 
 # Build and Deploy Ollama Docker
 ollama_docker_image = docker_build.Image('ollama',
@@ -88,14 +96,15 @@ ollama_docker_image = docker_build.Image('ollama',
         docker_build.Platform.LINUX_ARM64,
     ],
     push=True,
-    opts=pulumi.ResourceOptions(depends_on=[ollama_repo, configure_docker])
+    opts=pulumi.ResourceOptions(depends_on=[image_repo, configure_docker])
 )
 
-esc_yaml = pulumi.Output.all(ollama_image, openwebui_image).apply(
+esc_yaml = pulumi.Output.all(ollama_image, agent_image, openwebui_image).apply(
         lambda args: pulumi.StringAsset(f"""values:
     pulumiConfig:
         ollamaImage: {args[0]}
-        openwebuiImage: {args[1]}"""
+        agentImage: {args[1]}
+        openwebuiImage: {args[2]}"""
         )
 )
 
@@ -108,6 +117,7 @@ esc_baseimages = pulumiservice.Environment("esc_baseimages",
 
 pulumi.export("openwebuiImage", openwebui_image)
 pulumi.export("ollamaImage", ollama_image)
+pulumi.export("images ESC env", esc_baseimages.id)
 
 stackmgmt = StackSettings("stacksettings", 
                           drift_management=drift_management if drift_management else None,
