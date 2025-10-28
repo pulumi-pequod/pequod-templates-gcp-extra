@@ -36,6 +36,7 @@ def service_name_shortener(name):
 
 # Get outputs from base infra stack
 ollama_image = config.get("ollamaImage")
+agent_image = config.get("agentImage")
 openwebui_image = config.get("openwebuiImage")
 
 ### LLM Deployment ###
@@ -116,6 +117,67 @@ install_model = local.Command(f"install_model_{llm_model.replace(':', '_')}",
     opts=pulumi.ResourceOptions(depends_on=[ollama_binding]),
 )
 
+agent_cr_service = cloudrun.Service("agent-service",
+    name=service_name_shortener(f"{base_name}-agent-cr"),
+    location=gcp_region,
+    deletion_protection= False,
+    ingress="INGRESS_TRAFFIC_ALL",
+    template={
+        "containers":[{
+            "image": agent_image,
+            "envs": [{
+                "name":"GOOGLE_CLOUD_PROJECT",
+                "value":gcp_project,
+            }
+            ,{
+                "name":"GOOGLE_CLOUD_LOCATION",
+                "value": gcp_region,  
+            },{
+                "name":"MODEL_NAME",
+                "value":llm_model,
+            },{
+                "name":"OLLAMA_API_BASE",
+                "value":ollama_cr_service.uri,
+            }],
+            "resources": {
+                "cpuIdle": False,
+                "limits":{
+                    "cpu": "2",
+                    "memory": "4Gi",
+                },
+                "startup_cpu_boost": True,
+            },
+            "startup_probe": {
+                "initial_delay_seconds": 0,
+                "timeout_seconds": 1,
+                "period_seconds": 1,
+                "failure_threshold": 1800,
+                "tcp_socket": {
+                    "port": 8080,
+                },
+            },
+        }],
+        "scaling": {      
+            "max_instance_count":2,
+            "min_instance_count":1,
+        },
+    },
+    traffics=[{
+        "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST",
+        "percent": 100,
+    }],
+    opts=pulumi.ResourceOptions(depends_on=[ollama_binding]),
+)
+
+agent_binding = cloudrun.ServiceIamBinding("agent-binding",
+    project=gcp_project,
+    location=gcp_region,
+    name=agent_cr_service,
+    role="roles/run.invoker",
+    members=["allUsers"],
+    opts=pulumi.ResourceOptions(depends_on=[agent_cr_service]),
+)
+
 ### Open WebUI Deployment ###
 # Open WebUI Cloud Run instance
 openwebui_cr_service = cloudrun.Service("openwebui-service",
@@ -180,6 +242,7 @@ stackmgmt = StackSettings("stacksettings",
 
 pulumi.export("LLM model deployed", llm_model)
 pulumi.export("ollama_url", ollama_cr_service.uri)
+pulumi.export("agent_url", agent_cr_service.uri)
 pulumi.export("open_webui_url", openwebui_cr_service.uri)
 
 
