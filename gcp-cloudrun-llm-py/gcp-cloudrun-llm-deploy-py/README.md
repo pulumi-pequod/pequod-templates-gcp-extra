@@ -5,6 +5,7 @@ Uses images managed by the `gcp-cloudrun-llm-base` project(s) to deploy an Ollam
 Deploys:
 - LLM running in CloudRun using GPU processors.
   - Additional model if specified.
+- Agent Development Kit (ADK) frontend for the LLM in CloudRun
 - OpenWebUI frontend for the LLM in CloudRun.
 
 ## Demonstrated Capabilities

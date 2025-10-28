@@ -7,7 +7,7 @@ description: ${DESCRIPTION}
 packages:
   stackmgmt: https://github.com/pulumi-pequod/component-stackmgmt
 template:
-  description: Deploys LLM model and OpenWebUI to GCP Cloud Run.
+  description: Deploys LLM model, Agent Development Kit, and OpenWebUI services to GCP Cloud Run.
   config:
     llmModel:
       description: LLM Model to deploy. E.g. "gemma3:latest", "llama3:latest", etc)

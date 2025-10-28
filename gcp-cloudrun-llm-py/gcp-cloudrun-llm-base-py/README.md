@@ -4,6 +4,7 @@ Deploys the image(s) used by the CloudRun LLM infrastructure managed by `gcp-clo
 
 Deploys:
 - GCP Artifact Registry
+- Agent Development Kit (ADK) Image
 - OpenWebUI Image
 - Ollama Image with Gemma model installed
 - ESC environment
