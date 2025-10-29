@@ -141,6 +141,8 @@ class CloudRunService(pulumi.ComponentResource):
             opts=pulumi.ResourceOptions(parent=self, depends_on=[cr_service]),
         )
 
+        uri = cr_service.uri
+
 
 
 
