@@ -6,7 +6,7 @@ class CloudRunServiceArgs (TypedDict):
 
     image: pulumi.Input[str] 
     """The link for the container image to deploy."""
-    cpu: pulumi.Input[str]
+    cpu: pulumi.Input[int]
     """CPU allocation for the container."""
     memory: pulumi.Input[str]
     """Memory allocation for the container."""
