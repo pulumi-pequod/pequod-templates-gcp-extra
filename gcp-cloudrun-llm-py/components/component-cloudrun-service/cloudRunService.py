@@ -128,7 +128,7 @@ class CloudRunService(pulumi.ComponentResource):
 
         cr_service = cloudrun.Service(name,
             name=service_name_shortener(f"{name}-cr-service"),
-            location=args.location,
+            location=args.get("location"),
             deletion_protection= False,
             ingress="INGRESS_TRAFFIC_ALL",
             template=template_config,
