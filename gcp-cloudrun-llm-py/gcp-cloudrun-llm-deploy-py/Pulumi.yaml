@@ -6,6 +6,7 @@ runtime:
 description: ${DESCRIPTION}
 packages:
   stackmgmt: https://github.com/pulumi-pequod/component-stackmgmt
+  cloudrun-service: https://github.com/pulumi-pequod/pequod-templates-gcp-extra/gcp-cloudrun-llm-py/components/component-cloudrun-service
 template:
   description: Deploys LLM model, Agent Development Kit, and OpenWebUI services to GCP Cloud Run.
   config:
