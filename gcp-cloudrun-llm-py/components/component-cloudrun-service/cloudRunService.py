@@ -1,5 +1,5 @@
 import pulumi
-from pulumi_gcp import cloudrun
+from pulumi_gcp import cloudrunv2 as cloudrun
 from typing import Optional, TypedDict, List, Dict
 
 class CloudRunServiceArgs (TypedDict):
@@ -137,7 +137,7 @@ class CloudRunService(pulumi.ComponentResource):
 
         binding = cloudrun.ServiceIamBinding(f"{name}-cr-binding",
             name=cr_service,
-            location=args.location,
+            # location=gcp_region,
             role="roles/run.invoker",
             members=["allUsers"],
             opts=pulumi.ResourceOptions(parent=self, depends_on=[cr_service]),
