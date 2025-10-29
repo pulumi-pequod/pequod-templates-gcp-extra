@@ -137,7 +137,7 @@ class CloudRunService(pulumi.ComponentResource):
 
         binding = cloudrun.ServiceIamBinding(f"{name}-cr-binding",
             name=cr_service,
-            # location=gcp_region,
+            location=args.get("location"),
             role="roles/run.invoker",
             members=["allUsers"],
             opts=pulumi.ResourceOptions(parent=self, depends_on=[cr_service]),
