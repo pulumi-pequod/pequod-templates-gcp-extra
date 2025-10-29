@@ -59,22 +59,22 @@ class CloudRunService(pulumi.ComponentResource):
 
         # Build resource limits conditionally
         resource_limits = {
-            "cpu": args.cpu,
-            "memory": args.memory,
+            "cpu": args.get("cpu"),
+            "memory": args.get("memory"),
         }
         if args.get("num_gpus"):
-            resource_limits["nvidia.com/gpu"] = args.num_gpus
+            resource_limits["nvidia.com/gpu"] = args.get("num_gpus")
 
         # Build container configuration
         container_config = {
-            "image": args.image,
+            "image": args.get("image"),
             "resources": {
                 "cpuIdle": False,
                 "limits": resource_limits,
                 "startup_cpu_boost": True,
             },
             "ports": {
-                "container_port": args.service_port,
+                "container_port": args.get("service_port"),
             },
             "startup_probe": {
                 "initial_delay_seconds": 0,  # Increased to allow model download
@@ -82,7 +82,7 @@ class CloudRunService(pulumi.ComponentResource):
                 "period_seconds": 1,
                 "failure_threshold": 360,  # 60 minutes max for model download
                 "tcp_socket": {
-                    "port": args.service_port,
+                    "port": args.get("service_port"),
                 },
             },
         }
@@ -90,13 +90,13 @@ class CloudRunService(pulumi.ComponentResource):
         # Add volume mounts if bucket_name is provided
         if args.get("bucket_name"):
             container_config["volume_mounts"] = [{
-                "name": args.bucket_name,
-                "mount_path": args.mount_path, 
+                "name": args.get("bucket_name"),
+                "mount_path": args.get("mount_path"), 
             }]
 
         # Add environment variables if provided
         if args.get("envs"):
-            container_config["envs"] = args.envs
+            container_config["envs"] = args.get("envs")
 
         # Build template configuration
         template_config = {
@@ -119,7 +119,7 @@ class CloudRunService(pulumi.ComponentResource):
             template_config["volumes"] = [{
                 "name": "ollama-bucket",
                 "gcs": {
-                    "bucket": args.bucket_name,
+                    "bucket": args.get("bucket_name"),
                     "read_only": False,
                 },
             }]
