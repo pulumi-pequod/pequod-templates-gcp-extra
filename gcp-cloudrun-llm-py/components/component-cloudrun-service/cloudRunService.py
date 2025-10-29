@@ -4,22 +4,24 @@ from typing import Optional, TypedDict, List, Dict
 
 class CloudRunServiceArgs (TypedDict):
 
-    image: pulumi.Input[str] 
-    """The link for the container image to deploy."""
+    bucket_name: Optional[pulumi.Input[str]]
+    """Bucket for the service. (optional)"""
     cpu: pulumi.Input[int]
     """CPU allocation for the container."""
+    envs: Optional[List[Dict[str, pulumi.Input[str]]]]
+    """Environment variables for the container. List of dicts with 'name' and 'value' keys. (optional)"""
+    image: pulumi.Input[str] 
+    """The link for the container image to deploy."""
+    location: pulumi.Input[str]
+    """GCP region for the Cloud Run service."""
     memory: pulumi.Input[str]
     """Memory allocation for the container."""
+    mount_path: Optional[pulumi.Input[str]]
+    """Mount path for the bucket. (optional)"""
     num_gpus: Optional[pulumi.Input[int]]
     """Number of GPUs to allocate for the container. (optional)"""
     service_port: pulumi.Input[int]
     """Port for the service."""
-    bucket_name: Optional[pulumi.Input[str]]
-    """Bucket for the service. (optional)"""
-    mount_path: Optional[pulumi.Input[str]]
-    """Mount path for the bucket. (optional)"""
-    envs: Optional[List[Dict[str, pulumi.Input[str]]]]
-    """Environment variables for the container. List of dicts with 'name' and 'value' keys. (optional)"""
 
 class CloudRunService(pulumi.ComponentResource):
     """
@@ -126,7 +128,7 @@ class CloudRunService(pulumi.ComponentResource):
 
         cr_service = cloudrun.Service(name,
             name=service_name_shortener(f"{name}-cr-service"),
-            # location=gcp_region,
+            location=args.location,
             deletion_protection= False,
             ingress="INGRESS_TRAFFIC_ALL",
             template=template_config,
@@ -135,7 +137,7 @@ class CloudRunService(pulumi.ComponentResource):
 
         binding = cloudrun.ServiceIamBinding(f"{name}-cr-binding",
             name=cr_service,
-            # location=gcp_region,
+            location=args.location,
             role="roles/run.invoker",
             members=["allUsers"],
             opts=pulumi.ResourceOptions(parent=self, depends_on=[cr_service]),
