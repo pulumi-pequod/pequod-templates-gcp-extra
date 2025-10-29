@@ -92,7 +92,7 @@ class CloudRunService(pulumi.ComponentResource):
         # Add volume mounts if bucket_name is provided
         if args.get("bucket_name"):
             container_config["volume_mounts"] = [{
-                "name": args.get("bucket_name"),
+                "name": f"{name}-bucket",
                 "mount_path": args.get("mount_path"), 
             }]
 
@@ -119,7 +119,7 @@ class CloudRunService(pulumi.ComponentResource):
         # Add volumes if bucket_name is provided
         if args.get("bucket_name"):
             template_config["volumes"] = [{
-                "name": "ollama-bucket",
+                "name": f"{name}-bucket",
                 "gcs": {
                     "bucket": args.get("bucket_name"),
                     "read_only": False,
