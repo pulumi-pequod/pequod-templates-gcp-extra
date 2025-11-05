@@ -1,4 +1,4 @@
 environment:
   - cloud-access/gcp-access
   - platform-team/stackmgmt
-  - gcp-cloudrun-llm/base-images
+  - gcp-llm/base-images

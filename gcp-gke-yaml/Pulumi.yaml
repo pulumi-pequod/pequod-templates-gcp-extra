@@ -2,20 +2,26 @@ name: ${PROJECT}
 runtime: yaml
 description: ${DESCRIPTION}
 packages:
-  component-gke: https://github.com/pulumi-pequod/component-gke@v1.0.0
+  component-gke: https://github.com/pulumi-pequod/component-gke@v1.1.1
   stackmgmt: https://github.com/pulumi-pequod/component-stackmgmt
 template:
   description: Pulumi program that uses a Pulumi Component to deploy a Google Kubernetes Engine (GKE) cluster and canary deployment
   config:
-    gcp:zone: 
-      description: GCP zone to deploy into.
-      default: us-central1-a    
+    gcp:region: 
+      description: GCP region to deploy into.
+      default: us-central1
+    autopilot:
+      description: Enable Autopilot mode for the GKE cluster. 
+      default: false
     nodeMachineType:
       description: Node type to use.
       default: n1-standard-1
     nodeCount:
       description: Desired number of nodes in the cluster
       default: 3
+    driftManagement:
+      description: Set to "Refresh" to periodically refresh state or set to "Correct" to also run an update after refresh.
+      default: Correct
 variables:
   masterVersion:
     fn::invoke:
@@ -27,6 +33,9 @@ config:
   service_name:
     type: string
     default: ${pulumi.project}
+  autopilot:
+    type: boolean
+    default: false
   nodeMachineType:
     type: string
     default: n1-standard-1

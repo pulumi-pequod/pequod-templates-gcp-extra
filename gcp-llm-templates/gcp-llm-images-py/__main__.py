@@ -111,7 +111,7 @@ esc_yaml = pulumi.Output.all(ollama_image, agent_image, openwebui_image).apply(
 esc_baseimages = pulumiservice.Environment("esc_baseimages",
     name="base-images",
     organization="pequod",
-    project="gcp-cloudrun-llm",
+    project="gcp-llm",
     yaml=esc_yaml,
 )
 
