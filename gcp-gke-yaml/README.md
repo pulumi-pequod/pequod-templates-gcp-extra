@@ -1,8 +1,8 @@
 # Google Kuberenetes Engine YAML
 
 Deploys:
-- Google Kubernetes Engine cluster
-- Canary K8s Deployment
+- Google Kubernetes Engine cluster (autopilot optional)
+- Namespace to test cluster
 
 ## Demonstrated Capabilities
 - K8s provider

@@ -5,14 +5,17 @@ runtime:
     virtualenv: venv
 description: ${DESCRIPTION}
 packages:
-  component-gke: https://github.com/pulumi-pequod/component-gke@v1.0.0
+  component-gke: https://github.com/pulumi-pequod/component-gke@v1.1.1
   stackmgmt: https://github.com/pulumi-pequod/component-stackmgmt
 template:
   description: Pulumi program that uses a Pulumi Component to deploy a Google Kubernetes Engine (GKE) cluster and canary deployment
   config:
-    gcp:zone: 
-      description: GCP zone to deploy into.
-      default: us-central1-a    
+    gcp:region: 
+      description: GCP region to deploy into.
+      default: us-central1
+    autopilot:
+      description: Enable Autopilot mode for the GKE cluster. 
+      default: false
     masterVersion:
       description: K8s version to use. Latest supported version is used if not set.
     nodeMachineType:

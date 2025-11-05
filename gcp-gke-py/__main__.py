@@ -19,6 +19,7 @@ from pulumi_pequod_stackmgmt import StackSettings, StackSettingsArgs
 # Stack Config
 config = pulumi.Config()
 service_name = config.get("service_name") or pulumi.get_project()
+autopilot = config.get_bool("autopilot") or False
 master_version = config.get("masterVersion") or container.get_engine_versions().latest_master_version
 node_machine_type = config.get("nodeMachineType") or "n1-standard-1"
 node_count = config.get("nodeCount") or 3 
@@ -27,6 +28,7 @@ base_name = pulumi.get_project()
 
 # Create a GKE cluster using the component resource 
 k8s_cluster = Cluster(base_name[:12], ClusterArgs(
+    autopilot=autopilot, 
     master_version=master_version,
     node_count=node_count,
     node_machine_type=node_machine_type

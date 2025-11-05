@@ -1,7 +1,7 @@
 # Google Kuberenetes Engine Python
 
 Deploys:
-- Google Kubernetes Engine cluster
+- Google Kubernetes Engine cluster (autopilot optional)
 - Canary K8s Deployment
 
 ## Demonstrated Capabilities
