@@ -47,6 +47,7 @@ resources:
   gke:
     type: gke:Cluster
     properties:
+      autopilot: ${autopilot}
       masterVersion: ${masterVersion.latestMasterVersion}
       nodeCount: ${nodeCount}
       nodeMachineType: ${nodeMachineType}
