@@ -10,5 +10,20 @@ description: ${DESCRIPTION}
 template:
   description: Deploys LLM model, Agent Development Kit, and OpenWebUI services to GKE Autopilot cluster.
   config:
-    base_infra_stack_name: 
-      description: Name of base k8s infra stack to use in form of "project/stack"
+    baseInfraStackName: 
+      description: Name of base k8s infra stack to use in form of "project/stack". Should be a GKE Autopilot cluster.
+    llmModel:
+      description: LLM Model to deploy. E.g. "gemma3:latest", "llama3:latest", etc)
+      default: gemma3:latest
+    llmCpu:
+      description: Desired number of CPUs for the LLM.
+      default: 4
+    llmMemory:
+      description: Desired memory for the LLM. 
+      default: 16Gi 
+    stackTtl:
+      description: How long before shutting down the stack in hours. (Default is 8 hours)
+      default: 8
+    driftManagement:
+      description: Set to "Correct" (default) for drift detection and remediateion, or "DetectOnly" for detection only.
+      default: Correct
