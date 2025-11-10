@@ -1,0 +1,7 @@
+environment:
+  # OIDC AWS access.
+  - cloud-access/aws-access
+  # Config used for the stack settings.
+  - platform-team/stackmgmt
+  # Provides kubeconfig from shared k8s cluster.
+  - shared-infra/k8s-cluster

@@ -1,0 +1,14 @@
+name: ${PROJECT}
+runtime:
+  name: python
+  options:
+    virtualenv: venv
+packages:
+  stackmgmt: https://github.com/pulumi-pequod/component-stackmgmt
+  k8sapp: https://github.com/pulumi-pequod/component-k8sapp@v1.2.0
+description: ${DESCRIPTION}
+template:
+  description: Deploys LLM model, Agent Development Kit, and OpenWebUI services to GKE Autopilot cluster.
+  config:
+    base_infra_stack_name: 
+      description: Name of base k8s infra stack to use in form of "project/stack"
