@@ -5,7 +5,7 @@ runtime:
     virtualenv: venv
 packages:
   stackmgmt: https://github.com/pulumi-pequod/component-stackmgmt
-  k8sapp: https://github.com/pulumi-pequod/component-k8sapp@v1.2.0
+  k8sapp: https://github.com/pulumi-pequod/component-k8sapp@v1.2.7
 description: ${DESCRIPTION}
 template:
   description: Deploys LLM model, Agent Development Kit, and OpenWebUI services to GKE Autopilot cluster.
