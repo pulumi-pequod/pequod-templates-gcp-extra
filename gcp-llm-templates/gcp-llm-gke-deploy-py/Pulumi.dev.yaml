@@ -2,4 +2,4 @@ environment:
   # OIDC AWS access.
   - idp/gcp-stacks
   # Config used for the stack settings.
-  - gcp-cloudrun-llm/base-images
+  - gcp-llm/base-images
