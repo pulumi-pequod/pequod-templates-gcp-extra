@@ -20,7 +20,7 @@ llm_gpu_count = config.get("gpuCount") or "1"
 llm_gke_accelerator = config.get("gkeAccelerator") or "nvidia-l4"
 
 # Get stack name of the base k8s infra to deploy to and get the kubeconfig for the cluster.
-base_infra_stack_name = config.require("base_infra_stack_name")  
+base_infra_stack_name = config.require("baseInfraStackName")  
 k8s_stack_name = f"{get_organization()}/{base_infra_stack_name}"
 k8s_stack_ref = StackReference(k8s_stack_name)
 kubeconfig = k8s_stack_ref.require_output("kubeconfig") 
