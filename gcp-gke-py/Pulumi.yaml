@@ -5,7 +5,7 @@ runtime:
     virtualenv: venv
 description: ${DESCRIPTION}
 packages:
-  component-gke: https://github.com/pulumi-pequod/component-gke@v1.2.0
+  component-gke: https://github.com/pulumi-pequod/component-gke@v1.1.0
   stackmgmt: https://github.com/pulumi-pequod/component-stackmgmt
 template:
   description: Pulumi program that uses a Pulumi Component to deploy a Google Kubernetes Engine (GKE) cluster and canary deployment
