@@ -20,7 +20,7 @@ template:
       description: Desired number of nodes in the cluster
       default: 3
     driftManagement:
-      description: Set to "Refresh" to periodically refresh state or set to "Correct" to also run an update after refresh.
+      description: Set to "DetectOnly" to periodically refresh state or set to "Correct" to also run an update after refresh.
       default: Correct
 variables:
   masterVersion:
