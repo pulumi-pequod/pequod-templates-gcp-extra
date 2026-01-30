@@ -5,16 +5,83 @@ Abstraction for resources needed when using Google Cloud Run.
 This repo delivers a component to abstract the details related to:
 - Creating a Google Cloud Run Service
 
-# Inputs
+# Usage
+## Specify Package in `Pulumi.yaml`
 
-* resource_group_name: The resource group in which the image registry should be deployed.
-* app_path: Path to the Dockerfile to build the app.
-* image_tag (Optional): Image tag to use. Default: latest
-* platform (Optional): The platform for the image. Default: linux/amd64
-* insights_sku (Optional): Sku for the insights workspace. Default: PerGB2018
-* app_ingress_port (Optional): Ingress port for the app. Default: 80
+Add the following to your `Pulumi.yaml` file:
+Note: If no version is specified, the latest version will be used.
 
-# Outputs
+```
+packages:
+  cloudrun-service: https://github.com/pulumi-pequod/pequod-templates-gcp-extra/gcp-cloudrun-llm-py/components/component-cloudrun-service[@vX.Y.Z]
 
-* container_app_fqdn: The DNS name for the container app.
+``` 
+
+## Use SDK in Program
+
+### Python
+```
+import pulumi_pequod_cloudrunservice as cloudrunservice
+
+ollama_cr_service = cloudrunservice.CloudRunService(f"ollama-{base_name}",
+    location=gcp_region,
+    image=ollama_image,
+    cpu=llm_cpu,
+    memory=llm_memory,
+    num_gpus=llm_num_gpus,
+    service_port=11434,
+    bucket_name=llm_bucket.name,
+    mount_path="/root/.ollama/",
+)
+```
+
+### Typescript
+```
+import * as cloudrunservice from "@pulumi-pequod/cloudrun-service";
+
+const ollamaService = new cloudrunservice.CloudRunService(`ollama-${baseName}`, {
+  location: gcpRegion,
+  image: ollamaImage,
+  cpu: llmCpu,
+  memory: llmMemory,
+  numGpus: llmNumGpus,
+  servicePort: 11434,
+  bucketName: llmBucket.name,
+  mountPath: "/root/.ollama/",
+});
+```
+
+### Dotnet
+```
+using PulumiPequod.CloudrunService;
+
+var ollamaService = new CloudRunService($"ollama-{baseName}", new CloudRunServiceArgs
+{
+    Location = gcpRegion,
+    Image = ollamaImage,
+    Cpu = llmCpu,
+    Memory = llmMemory,
+    NumGpus = llmNumGpus,
+    ServicePort = 11434,
+    BucketName = llmBucket.Name,
+    MountPath = "/root/.ollama/",
+});
+```
+
+### YAML
+```
+  ollamaService:
+    type: cloudrun:index:CloudRunService
+    properties:
+      location: ${gcpRegion}
+      image: ${ollamaImage}
+      cpu: ${llmCpu}
+      memory: ${llmMemory}
+      numGpus: ${llmNumGpus}
+      servicePort: 11434
+      bucketName: ${llmBucket.name}
+      mountPath: /root/.ollama/
+```
+
+
 
