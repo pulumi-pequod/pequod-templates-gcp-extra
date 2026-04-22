@@ -13,7 +13,7 @@ Note: If no version is specified, the latest version will be used.
 
 ```
 packages:
-  cloudrun-service: https://github.com/pulumi-pequod/pequod-templates-gcp-extra/gcp-cloudrun-llm-py/components/component-cloudrun-service[@vX.Y.Z]
+  cloudrun-service: https://github.com/pulumi-pequod/pequod-templates-gcp-extra/gcp-llm-templates/components/component-cloudrun-service[@vX.Y.Z]
 
 ``` 
 
