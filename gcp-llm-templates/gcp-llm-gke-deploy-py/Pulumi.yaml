@@ -8,6 +8,7 @@ packages:
   k8sapp: https://github.com/pulumi-pequod/component-k8sapp@v1.2.7
 description: ${DESCRIPTION}
 template:
+  displayName: GCP LLM stack on GKE Autopilot (Python)
   description: Deploys LLM model, Agent Development Kit, and OpenWebUI services to GKE Autopilot cluster.
   config:
     baseInfraStackName: 
