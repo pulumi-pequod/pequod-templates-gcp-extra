@@ -5,6 +5,7 @@ packages:
   component-gke: https://github.com/pulumi-pequod/component-gke@v1.1.1
   stackmgmt: https://github.com/pulumi-pequod/component-stackmgmt
 template:
+  displayName: GCP GKE cluster with canary deployment (YAML)
   description: Pulumi program that uses a Pulumi Component to deploy a Google Kubernetes Engine (GKE) cluster and canary deployment
   config:
     gcp:region: 
